@@ -29,9 +29,6 @@ extern char buf[512];
 
 int main(void) {
 	CSL_Status status;
-	uint8_t hr;
-	//resetInterrupt();
-    char hi[5] = "Hi\r\n";
 	status = initPllClock();
 	if(CSL_SOK != status){
 		printf("System Clock init failed \n");
@@ -50,14 +47,10 @@ int main(void) {
 			printf("UART configuration failed \n");
 			return -1;
 		}
-	send_data_uart("HI\r\n",5);
 	initInterrupt();
 	system_setup();
 	enableInterrupt();
 	while(1){
-		hr = hr3_get_heartrate();
-		sprintf(buf,"%u\n",hr);
-		send_data_uart(buf,255);
 	}
 	return 0;
 }
