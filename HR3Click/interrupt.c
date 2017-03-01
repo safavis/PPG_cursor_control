@@ -8,14 +8,16 @@
 #include "heartrate_3_hw.h"
 #include "heartrate_3.h"
 #include "uart.h"
+#include <string.h>
 
+//#define TEST_MATLAB
 /* Reference the start of the interrupt vector table */
 /* This symbol is defined in file vectors.asm       */
 extern void VECSTART(void);
 
 
 interrupt void int1_isr();
-char buf[512];
+char buf[11] = {0};
 //extern volatile int looper;
 extern Uint32 test_buf32_ch2[2048];
 
@@ -59,20 +61,39 @@ CSL_Status enableInterrupt(){
 	RTC_start();
 	return CSL_SOK;
 }
+#ifdef TEST_MATLAB
+interrupt void int1_isr(){
+	static uint32_t i=0;
+    static int int_count = 0;
+      if(int_count == 600){
+    	  printf("+10s \n");
+    	  int_count = 0;
+      }
+      else
+      	int_count++;
+    hr3_get_led3_val();
+    sprintf(buf,"%lu\n",i);
+    i++;
+    send_data_uart(buf,11);
+	return;
+}
+
+#else
 
 interrupt void int1_isr(){
 
     static int int_count = 0;
       if(int_count == 600){
-    	  printf("+10s n");
+    	  printf("+10s\n");
     	  int_count = 0;
       }
       else
       	int_count++;
-    sprintf(buf,"%lu\r\n",hr3_get_led3_val());
-    send_data_uart(buf,255);
+    sprintf(buf,"%lu\n",hr3_get_led3_val());
+    send_data_uart(buf,11);
 	return;
 }
+#endif
 #if 0
 interrupt void int1_isr(){
 
