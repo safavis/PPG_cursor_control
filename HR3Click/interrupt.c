@@ -81,14 +81,6 @@ interrupt void int1_isr(){
 #else
 
 interrupt void int1_isr(){
-
-    static int int_count = 0;
-      if(int_count == 600){
-    	  printf("+10s\n");
-    	  int_count = 0;
-      }
-      else
-      	int_count++;
     sprintf(buf,"%lu\n",hr3_get_led3_val());
     send_data_uart(buf,11);
 	return;

@@ -5,16 +5,15 @@ numSample = freq*frameSize;
 char_buf = [];
 data = zeros(1,numSample);
 tmp = [];
-tic;
-i = 0;
-toc;
+folder = createFolder();
 % Try–catch is to prevent Matlab from crashing when the program is finished
 try
     if ~isempty(instrfind)
         fclose(instrfind);
     end
     s = setup_serialport();
-    fileID = fopen('exp.txt','a');
+    filename = fullfile(folder,'ppg.txt');
+    fileID = fopen(filename,'a');
     figure;
     while(true)
         if(s.BytesAvailable > 0)
@@ -66,4 +65,19 @@ end
 
 function y =  parseData(a)
    y = str2num(char(a));
+end
+
+function folder = createFolder()
+%Create folder to store last trail's data
+
+data_root_folder = pwd;
+t = datetime('now');
+mon = month(t,'shortname');
+day_folder = sprintf('%d-%s-%d',t.Day,mon{1},t.Year);
+if(~exist(day_folder,'dir'))
+    mkdir(day_folder);
+end
+time_folder = sprintf('%02d-%0d',t.Hour,t.Minute);
+folder = fullfile(data_root_folder,day_folder,time_folder);
+mkdir(folder);
 end
